@@ -51,17 +51,16 @@ export default class HomePage extends Component {
             })
     }
     render() {
-        // const {navigation} = this.props;
+        const {navigation} = this.props;
         let statusBar={
-            backgroundColor: 'red',
-            barStyle: 'light-content',
+            // backgroundColor: 'red',
+            barStyle: 'dark-content',
         }
         let navigationBar =
             <NavigationBar
                 title={'最热'}
+                style={{backgroundColor:'#EE6363'}}
                 statusBar={statusBar}
-                // style={this.state.theme.styles.navBar}
-                // rightButton={this.renderRightButton()}
             />;
         const content = this.state.languageArray.length > 0 ? <ScrollableTabView
         tabBarBackgroundColor='#2196F3'
@@ -79,7 +78,7 @@ export default class HomePage extends Component {
     </ScrollableTabView> : null;
         return (
             <View style={styles.container}>
-                {/*{navigationBar}*/}
+                {navigationBar}
                 {content}
             </View>
         );
@@ -138,7 +137,6 @@ class PopularTab extends Component {
                         />
                     }
                 />
-
             </View>
         )
     }
@@ -147,8 +145,6 @@ class PopularTab extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
+        flex: 1, 
     }
 });

@@ -13,6 +13,7 @@ import {
     TextInput,
 } from 'react-native';
 import ScrollableTabView, {ScrollableTabBar,} from 'react-native-scrollable-tab-view';
+import NavigationBar from '../../components/NavigationBar';
 
 export default class MyPage extends Component {
     constructor(props) {
@@ -23,10 +24,10 @@ export default class MyPage extends Component {
         const {navigation} = this.props;
         return (
             <View style={styles.container}>
-            {/* <Navigationbar
+            <NavigationBar
                 title='自定义标签'
                 style={{backgroundColor:'#6495ED'}}
-            /> */}
+            />
                 <Text
                 onPress={()=>{
                     navigation.navigate('CustomKeyPage');

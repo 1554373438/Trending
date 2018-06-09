@@ -15,6 +15,8 @@ import {
     Alert,
 } from 'react-native';
 import CheckBox from 'react-native-check-box';
+import NavigationBar from '../../components/NavigationBar';
+
 import ViewUtils from '../../util/ViewUtils';
 import ArrayUtils from '../../util/ArrayUtils';
 import LanguageDao, {FLAG_LANGUAGE} from '../../expand/dao/LanguageDao';
@@ -112,7 +114,7 @@ export default class CustomKeyPage extends Component {
     render() {
         const {navigation} = this.props;
         let rightButton = <TouchableOpacity
-            onPress={()=>this.save()}
+            onPress={()=>this.onSave()}
             >
             <View style={{margin:10}}>
                 <Text style={styles.title}>保存</Text>
@@ -120,12 +122,12 @@ export default class CustomKeyPage extends Component {
             </TouchableOpacity>
         return (
             <View style={styles.container}>
-            {/* <Navigationbar
+            <NavigationBar
                 title='自定义标签'
-                style={{backgroundColor:'white'}}
+                style={{backgroundColor:'#EE6363'}}
                 leftButton={ViewUtils.getLeftButton(()=>this.onBack())}
                 rightButton={rightButton}
-            /> */}
+            />
                 <ScrollView>
                     {this.renderView()}
                     <Text onPress={()=>this.onSave()}>保存</Text>

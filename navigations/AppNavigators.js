@@ -82,7 +82,7 @@ export const AppStackNavigator = StackNavigator({
     },
 },{
     navigationOptions: {
-        title:'Trending',
-        // header:null,
+        // title:'Trending',
+        header:null,
     }
 });
