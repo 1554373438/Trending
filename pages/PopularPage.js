@@ -20,21 +20,35 @@ import NavigationBar from '../components/NavigationBar';
 import DataRepository from '../expand/dao/DataRepository';
 import RepositoryCell from '../components/RepositoryCell';
 
+import LanguageDao, {FLAG_LANGUAGE} from '../expand/dao/LanguageDao';
 const URL = 'https://api.github.com/search/repositories?q=';
 const QYERY_STR = '&sort=start'
 
 export default class HomePage extends Component {
-
     constructor(props) {
         super(props);
+        this.LanguageDao = new LanguageDao(FLAG_LANGUAGE.flag_key);
         this.dataRepository = new DataRepository();
         this.state = {
-            result: ''
+            languageArray: [],
         }
-
     }
     static  navigationOptions =  {
         headerTitle:'最热',
+    }
+    componentDidMount() {
+        this.loadlanguageData();
+    }
+    loadlanguageData() {
+        this.LanguageDao.fetch()
+            .then(result=>{
+                this.setState({
+                    languageArray:result
+                })
+            })
+            .catch(error=>{
+                console.log(error);
+            })
     }
     render() {
         // const {navigation} = this.props;
@@ -49,22 +63,24 @@ export default class HomePage extends Component {
                 // style={this.state.theme.styles.navBar}
                 // rightButton={this.renderRightButton()}
             />;
+        const content = this.state.languageArray.length > 0 ? <ScrollableTabView
+        tabBarBackgroundColor='#2196F3'
+        tabBarActiveTextColor='white'
+        tabBarInactiveTextColor='mintcream'
+        tabBarUnderlineStyle={{backgroundColor:'#e7e7e7',height:2}}
+        renderTabBar={() => <ScrollableTabBar/>}
+    >
+        {
+            this.state.languageArray.map((item,index)=>{
+                let languageItem = item;
+                return languageItem.checked?<PopularTab key={index} tabLabel={languageItem.name}></PopularTab>:null;
+            })
+        }
+    </ScrollableTabView> : null;
         return (
             <View style={styles.container}>
                 {/*{navigationBar}*/}
-                <ScrollableTabView
-                    tabBarBackgroundColor='#2196F3'
-                    tabBarActiveTextColor='white'
-                    tabBarInactiveTextColor='mintcream'
-                    tabBarUnderlineStyle={{backgroundColor:'#e7e7e7',height:2}}
-                    renderTabBar={() => <ScrollableTabBar/>}
-                >
-                    <PopularTab tabLabel='Java'>Java</PopularTab>
-                    <PopularTab tabLabel='Ios'>IOS</PopularTab>
-                    <PopularTab tabLabel='Android'>Android</PopularTab>
-                    <PopularTab tabLabel='JavaScript'>JavaScript</PopularTab>
-                    <PopularTab tabLabel='React'>React</PopularTab>
-                </ScrollableTabView>;
+                {content}
             </View>
         );
     }

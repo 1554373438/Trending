@@ -5,7 +5,8 @@ import Welcome from '../pages/Welcome';
 import PopularPage from '../pages/PopularPage';
 import Trending from '../pages/Trending';
 import Favarite from '../pages/Favarite';
-import My from '../pages/My';
+import My from '../pages/MyAbout/My';
+import CustomKeyPage from '../pages/MyAbout/CustomKeyPage';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -73,12 +74,15 @@ export const AppStackNavigator = StackNavigator({
     Welcome: {
         screen: Welcome,
     },
+    CustomKeyPage: {
+        screen: CustomKeyPage,
+    },
     TabNav: {
         screen: AppTabNavigator,
     },
 },{
     navigationOptions: {
-        // title:'Trending',
-        header:null,
+        title:'Trending',
+        // header:null,
     }
 });
