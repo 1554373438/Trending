@@ -33,6 +33,11 @@ export default class MyPage extends Component {
                     navigation.navigate('CustomKeyPage');
                 }}
                 >自定义标签</Text>
+                <Text
+                onPress={()=>{
+                    navigation.navigate('SortKeyPage');
+                }}
+                >标签排序</Text>
             </View>
         );
     }

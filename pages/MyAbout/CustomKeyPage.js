@@ -130,7 +130,6 @@ export default class CustomKeyPage extends Component {
             />
                 <ScrollView>
                     {this.renderView()}
-                    <Text onPress={()=>this.onSave()}>保存</Text>
                 </ScrollView>
             </View>
         );
@@ -140,9 +139,7 @@ const styles = StyleSheet.create({
     container: {
     flex:1,
     },
-    title:{
-        fontSize:22,
-    },
+
     item:{
         flexDirection:'row',
         alignItems:'center',
@@ -150,6 +147,10 @@ const styles = StyleSheet.create({
     bottomLine:{
         borderBottomWidth:0.7,
         borderColor:'darkgray',
+    },
+    title: {
+        fontSize: 20,
+        color: '#FFF',
     }
 
 });

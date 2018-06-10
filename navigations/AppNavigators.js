@@ -7,6 +7,7 @@ import Trending from '../pages/Trending';
 import Favarite from '../pages/Favarite';
 import My from '../pages/MyAbout/My';
 import CustomKeyPage from '../pages/MyAbout/CustomKeyPage';
+import SortKeyPage from '../pages/MyAbout/SortKeyPage';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -76,6 +77,9 @@ export const AppStackNavigator = StackNavigator({
     },
     CustomKeyPage: {
         screen: CustomKeyPage,
+    },
+    SortKeyPage: {
+        screen: SortKeyPage,
     },
     TabNav: {
         screen: AppTabNavigator,
