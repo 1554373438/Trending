@@ -46,4 +46,13 @@ export default class ArrayUtils {
         }
         return true;
     }
+    /**
+     * 将数组中指定元素移除
+     * **/
+    static remove(array,item){
+        if (!array)return;
+        for(var i=0,l=array.length;i<l;i++){
+            if (item===array[i])array.splice(i,1);
+        }
+    }
 }

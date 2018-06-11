@@ -34,6 +34,11 @@ export default class MyPage extends Component {
                 }}
                 >自定义标签</Text>
                 <Text
+                    onPress={()=>{
+                        navigation.navigate('CustomKeyPage',{isRemoveKey:true});
+                    }}
+                >标签移除</Text>
+                <Text
                 onPress={()=>{
                     navigation.navigate('SortKeyPage');
                 }}
