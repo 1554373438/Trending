@@ -1,2 +1,25 @@
 {
+  "emmet.includeLanguages": {
+    "javascript": "javascriptreact",
+  },
+  "eslint.autoFixOnSave": true,
+  "eslint.enable": true,
+  "eslint.options": {
+    "configFile": "./.eslintrc.js"
+  },
+  "eslint.run": "onSave",
+  "eslint.validate": [
+    "html",
+    "javascript",
+    "javascriptreact"
+  ],
+  "eslint.workingDirectories": [
+    "."
+  ],
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/npm-debug.log": true
+  },
+  "javascript.format.enable": false,
+  "javascript.validate.enable": false,
 }

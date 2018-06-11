@@ -1,0 +1,10 @@
+{
+  "presets": ["react-native"],
+  "env": {
+    "production": {
+    },
+    "development": {
+      "plugins": ["transform-react-jsx-source", "transform-class-properties"]
+    }
+  }
+}
