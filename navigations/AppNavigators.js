@@ -6,6 +6,7 @@ import PopularPage from '../pages/PopularPage';
 import Trending from '../pages/Trending';
 import Favarite from '../pages/Favarite';
 import My from '../pages/MyAbout/My';
+import RepositoryDetail from '../pages/RepositoryDetail';
 import CustomKeyPage from '../pages/MyAbout/CustomKeyPage';
 import SortKeyPage from '../pages/MyAbout/SortKeyPage';
 
@@ -74,6 +75,9 @@ export const AppTabNavigator = TabNavigator({
 export const AppStackNavigator = StackNavigator({
     Welcome: {
         screen: Welcome,
+    },
+    RepositoryDetail: {
+        screen: RepositoryDetail,
     },
     CustomKeyPage: {
         screen: CustomKeyPage,
