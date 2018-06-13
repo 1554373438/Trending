@@ -15,12 +15,15 @@ import {
 import NavigationBar from '../components/NavigationBar';
 
 import ViewUtils from '../util/ViewUtils';
+const TRENDING_URL = 'https://github.com/';
 
 export default class RepositoryDetail extends Component {
     constructor(props) {
         super(props);
-        let url= this.props.navigation.state.params.owner.html_url;
-        let title = this.props.navigation.state.params.full_name;
+        let url= this.props.navigation.state.params.owner && this.props.navigation.state.params.owner.html_url ? this.props.navigation.state.params.owner.html_url:
+            TRENDING_URL+this.props.navigation.state.params.fullName;
+        let title = this.props.navigation.state.params.full_name ? this.props.navigation.state.params.full_name :
+            this.props.navigation.state.params.fullName;
         this.state = {
             url: url,
             canGoBack: false,

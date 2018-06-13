@@ -16,7 +16,7 @@ import Toast,{DURATION} from 'react-native-easy-toast'
 import ScrollableTabView, {ScrollableTabBar} from 'react-native-scrollable-tab-view';
 
 import NavigationBar from '../components/NavigationBar';
-import DataRepository from '../expand/dao/DataRepository';
+import DataRepository, {FLAG_STORAGE} from '../expand/dao/DataRepository';
 import RepositoryCell from '../components/RepositoryCell';
 
 import LanguageDao, {FLAG_LANGUAGE} from '../expand/dao/LanguageDao';
@@ -24,11 +24,11 @@ import LanguageDao, {FLAG_LANGUAGE} from '../expand/dao/LanguageDao';
 const URL = 'https://api.github.com/search/repositories?q=';
 const QYERY_STR = '&sort=start'
 
-export default class HomePage extends Component {
+export default class PopularPage extends Component {
     constructor(props) {
         super(props);
         this.LanguageDao = new LanguageDao(FLAG_LANGUAGE.flag_key);
-        this.dataRepository = new DataRepository();
+        // this.dataRepository = new DataRepository(FLAG_STORAGE.flag_popular);
         this.state = {
             languageArray: [],
         }
@@ -99,7 +99,7 @@ export default class HomePage extends Component {
 class PopularTab extends Component {
     constructor(props) {
         super(props);
-        this.dataRepository = new DataRepository();
+        this.dataRepository = new DataRepository(FLAG_STORAGE.flag_popular);
         this.state = {
             dataSource: '',
             isLoading: false,
