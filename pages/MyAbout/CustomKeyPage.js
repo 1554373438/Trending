@@ -24,8 +24,8 @@ import LanguageDao, {FLAG_LANGUAGE} from '../../expand/dao/LanguageDao';
 export default class CustomKeyPage extends Component {
     constructor(props) {
         super(props);
-        this.isRemoveKey = this.props.navigation.state.params ? true:false;
-        this.LanguageDao = new LanguageDao(FLAG_LANGUAGE.flag_key);
+        this.isRemoveKey = this.props.navigation.state.params.isRemoveKey ? true:false;
+        this.LanguageDao = new LanguageDao(this.props.navigation.state.params.flag);
         this.changevalues=[];
         this.state = {
             dataArry: []
@@ -127,7 +127,8 @@ export default class CustomKeyPage extends Component {
                 <Text style={styles.title}>{rightBuyttonTitle}</Text>
             </View>
             </TouchableOpacity>
-        let navTitle = this.isRemoveKey ? '标签移除' : '自定义标签'
+        let navTitle = this.isRemoveKey ? '标签移除' : '自定义标签';
+        navTitle = this.props.navigation.state.params.flag === FLAG_LANGUAGE.flag_language ? '自定义语言' : navTitle;
         return (
             <View style={styles.container}>
             <NavigationBar

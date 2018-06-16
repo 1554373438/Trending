@@ -24,7 +24,7 @@ import ViewUtils from '../../util/ViewUtils';
 export default class SortKeyPage extends Component {
     constructor(props) {
         super(props);
-        this.LanguageDao = new LanguageDao(FLAG_LANGUAGE.flag_key);
+        this.LanguageDao = new LanguageDao(this.props.navigation.state.params.flag);
         this.dataArray = [];
         this.sortResultArray = [];
         this.originalCheckedArray = [];
@@ -32,28 +32,32 @@ export default class SortKeyPage extends Component {
             checkedArray: []
         }
     }
+
     componentDidMount() {
         this.loadData();
     }
+
     loadData() {
-        this.LanguageDao.fetch().then((data)=> {
+        this.LanguageDao.fetch().then((data) => {
             this.getCheckedItems(data);
-        }).catch((error)=> {
+        }).catch((error) => {
             console.log(error);
         });
     }
+
     getCheckedItems(dataArray) {
         this.dataArray = dataArray;
         let checkedArray = [];
         for (let i = 0, j = dataArray.length; i < j; i++) {
             let data = dataArray[i];
-            if (data.checked)checkedArray.push(data);
+            if (data.checked) checkedArray.push(data);
         }
         this.setState({
             checkedArray: checkedArray
         })
         this.originalCheckedArray = ArrayUtils.clone(checkedArray);
     }
+
     onBack() {
         if (!ArrayUtils.isEqual(this.originalCheckedArray, this.state.checkedArray)) {
             Alert.alert(
@@ -75,6 +79,7 @@ export default class SortKeyPage extends Component {
             this.props.navigation.goBack();
         }
     }
+
     onSave(haChecked) {
         if (!haChecked) {
             if (ArrayUtils.isEqual(this.originalCheckedArray, this.state.checkedArray)) {
@@ -86,6 +91,7 @@ export default class SortKeyPage extends Component {
         this.LanguageDao.save(this.sortResultArray);
         this.props.navigation.goBack();
     }
+
     getSortResult() {
         this.sortResultArray = ArrayUtils.clone(this.dataArray);
         for (let i = 0, j = this.originalCheckedArray.length; i < j; i++) {
@@ -94,23 +100,24 @@ export default class SortKeyPage extends Component {
             this.sortResultArray.splice(index, 1, this.state.checkedArray[i]);
         }
     }
+
     render() {
-        const {navigation} = this.props;
         let rightButton = <TouchableOpacity
-            onPress={()=>this.onSave()}
-            >
-            <View style={{margin:10}}>
+            onPress={() => this.onSave()}
+        >
+            <View style={{margin: 10}}>
                 <Text style={styles.title}>保存</Text>
             </View>
-            </TouchableOpacity>
+        </TouchableOpacity>
+        let navTitle = this.props.navigation.state.params.flag === FLAG_LANGUAGE.flag_language ? '语言排序' : '标签排序';
         return (
             <View style={styles.container}>
-            <NavigationBar
-                title='标签排序'
-                style={{backgroundColor:'#6495ED'}}
-                leftButton={ViewUtils.getLeftButton(()=>this.onBack())}
-                rightButton={rightButton}
-            />
+                <NavigationBar
+                    title={navTitle}
+                    style={{backgroundColor: '#6495ED'}}
+                    leftButton={ViewUtils.getLeftButton(() => this.onBack())}
+                    rightButton={rightButton}
+                />
                 <SortableListView
                     data={this.state.checkedArray}
                     order={Object.keys(this.state.checkedArray)}
@@ -124,19 +131,20 @@ export default class SortKeyPage extends Component {
         );
     }
 }
+
 class SortCell extends Component {
     render() {
-        return  (
+        return (
             <TouchableHighlight
-            underlayColor={'#eee'}
-            style={styles.item}
-            {...this.props.sortHandlers}>
-            <View style={styles.row}>
-                <Image source={require('../../res/images/ic_sort.png')} resizeMode='stretch' style={styles.image}/>
-                <Text>{this.props.data.name}</Text>
-            </View>
-        </TouchableHighlight>
-        )   
+                underlayColor={'#eee'}
+                style={styles.item}
+                {...this.props.sortHandlers}>
+                <View style={styles.row}>
+                    <Image source={require('../../res/images/ic_sort.png')} resizeMode='stretch' style={styles.image}/>
+                    <Text>{this.props.data.name}</Text>
+                </View>
+            </TouchableHighlight>
+        )
     }
 }
 
@@ -146,7 +154,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     item: {
-        padding:15,
+        padding: 15,
         backgroundColor: "#F8F8F8",
         borderBottomWidth: 1,
         borderColor: '#eee',
@@ -154,14 +162,14 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     row: {
-        flexDirection:'row',
-        alignItems:'center',
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     image: {
         width: 16,
         height: 16,
         marginRight: 10,
-        tintColor:'#2196F3',
+        tintColor: '#2196F3',
     },
     title: {
         fontSize: 20,
