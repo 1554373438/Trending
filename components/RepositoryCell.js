@@ -21,9 +21,9 @@ export default class RepositoryCell extends Component {
             favoriteIcon: this.props.data.isFavorite ? require('../res/images/ic_star.png') : require('../res/images/ic_unstar_transparent.png'),
         }
     }
-    // componentWillReceiveProps(nextProps) {
-    //     this.setFavoriteState(nextProps.data.isFavorite);
-    // }
+    componentWillReceiveProps(nextProps) {
+        this.setFavoriteState(nextProps.data.isFavorite);
+    }
     onPressFavorite() {
         this.setFavoriteState(!this.state.isFavorite);
         this.props.onFavorite(this.props.data.modelItem, !this.state.isFavorite)
@@ -51,7 +51,6 @@ export default class RepositoryCell extends Component {
             onPress={this.props.onSelect}
         >
             <View style={styles.cell_container}>
-                <Text>{JSON.stringify(this.props.data.isFavorite)}</Text>
                 <Text style={styles.title}>{itemData.full_name}</Text>
                 <Text style={styles.description}>{itemData.description}</Text>
                 <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>

@@ -20,10 +20,12 @@ import DataRepository, {FLAG_STORAGE} from '../expand/dao/DataRepository';
 import RepositoryCell from '../components/RepositoryCell';
 
 import LanguageDao, {FLAG_LANGUAGE} from '../expand/dao/LanguageDao';
-
+import FavoriteDao from '../expand/dao/FavoriteDao'
 import ProjectModel from '../model/ProjectModel'
+import Utils from '../util/Utils'
 const URL = 'https://api.github.com/search/repositories?q=';
 const QYERY_STR = '&sort=start'
+var favoriteDao = new FavoriteDao(FLAG_STORAGE.flag_popular);
 
 export default class PopularPage extends Component {
     constructor(props) {
@@ -100,8 +102,9 @@ class PopularTab extends Component {
         super(props);
         this.dataRepository = new DataRepository(FLAG_STORAGE.flag_popular);
         this.state = {
-            dataSource: '',
+            dataSource: [],
             isLoading: false,
+            favoriteKeys: [],
         }
     }
 
@@ -121,7 +124,7 @@ class PopularTab extends Component {
                 //     dataSource: items,
                 //     isLoading: false,
                 // });
-                this.flushFavoriteState();
+                this.getFavoriteKeys();
                 if (result && result.update_date && !this.dataRepository.checkDate(result.update_date)) {
                     DeviceEventEmitter.emit('showToast', '数据过时')
                     return this.dataRepository.fetchNetRepository(url)
@@ -135,7 +138,7 @@ class PopularTab extends Component {
                 //     isLoading: false,
                 // });
                 this.items = items;
-                this.flushFavoriteState();
+                this.getFavoriteKeys();
                 DeviceEventEmitter.emit('showToast', '显示网络数据')
             })
             .catch((error) => {
@@ -153,11 +156,25 @@ class PopularTab extends Component {
         let projectModels = [];
         let items = this.items;
         for (var i = 0, len = items.length; i < len; i++) {
-            projectModels.push(new ProjectModel(items[i], true));
+            projectModels.push(new ProjectModel(items[i],  Utils.checkFavorite(items[i], this.state.favoriteKeys)));
         }
         this.updateState({
             isLoading: false,
             dataSource: projectModels,
+        });
+    }
+    /**
+     * 获取本地用户收藏的ProjectItem
+     */
+    getFavoriteKeys() {
+        favoriteDao.getFavoriteKeys().then((keys)=> {
+            if (keys) {
+                this.updateState({favoriteKeys: keys});
+            }
+            this.flushFavoriteState();
+        }).catch((error)=> {
+            this.flushFavoriteState();
+            console.log(error);
         });
     }
     updateState(dic) {
@@ -165,19 +182,24 @@ class PopularTab extends Component {
         this.setState(dic);
     }
 
-    onSelect({item}) {
-        this.props.navigation.navigate('RepositoryDetail', item.modelItem);
+    onSelect(item) {
+        this.props.navigation.navigate('RepositoryDetail', {projectModel:item, flag: FLAG_STORAGE.flag_popular});
     }
 
-    onFavorite() {
+    onFavorite(modelItem,isFavorite) {
+        if(isFavorite) {
+            favoriteDao.saveFavoriteItem(modelItem.id.toString(),JSON.stringify(modelItem))
+        }else {
+            favoriteDao.removeFavoriteItem(modelItem.id.toString())
+        }
 
     }
     renderRow({item}) {
         return (<RepositoryCell
             data={item}
             key={item.modelItem.id}
-            onSelect={()=>this.onSelect({item})}
-            onFavorite={(callbackModelItem,callbackIsFavorite)=>this.onFavorite(modelItem,isFavorite)}
+            onSelect={()=>this.onSelect(item)}
+            onFavorite={(callbackModelItem,callbackIsFavorite)=>this.onFavorite(callbackModelItem,callbackIsFavorite)}
         />)
     }
 

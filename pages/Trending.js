@@ -26,8 +26,14 @@ import NavigationBar from '../components/NavigationBar';
 import DataRepository, {FLAG_STORAGE} from '../expand/dao/DataRepository';
 import TrendingCell from '../components/TrendingCell';
 
+import Utils from '../util/Utils'
+import FavoriteDao from '../expand/dao/FavoriteDao'
+import ProjectModel from '../model/ProjectModel'
 import TimeSpan from '../model/TimeSpans';
 import LanguageDao, {FLAG_LANGUAGE} from '../expand/dao/LanguageDao';
+
+var dataRepository = new DataRepository(FLAG_STORAGE.flag_trending);
+var favoriteDao = new FavoriteDao(FLAG_STORAGE.flag_popular);
 
 const timeSpanTextArray = [
     new TimeSpan('今 天', 'since=daily'),
@@ -175,15 +181,16 @@ export default class TrendingPage extends Component {
 class TrendingTab extends Component {
     constructor(props) {
         super(props);
-        this.dataRepository = new DataRepository(FLAG_STORAGE.flag_trending);
+        // this.dataRepository = new DataRepository(FLAG_STORAGE.flag_trending);
         this.state = {
-            dataSource: '',
+            dataSource: [],
             isLoading: false,
+            favoriteKeys: [],
         }
     }
 
     componentDidMount() {
-        this.loadData(this.props.timeSpan, true);
+        this.loadData(this.props.timeSpan);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -196,53 +203,95 @@ class TrendingTab extends Component {
         return API_URL + category + '?' + timeSpan.searchText;
     }
     onRefresh() {
-       this.loadData(this.props.timeSpan)
+       this.loadData(this.props.timeSpan,true)
     }
     loadData(timeSpan, isRefresh) {
         this.updateState({
             isLoading: true,
         })
         const url = this.genFetchUrl(timeSpan, this.props.tabLabel);
-        this.dataRepository.fetchRepository(url)
+        dataRepository.fetchRepository(url)
             .then((result) => {
-                let items = result && result.items ? result.items : result ? result : [];
-                this.updateState({
-                    dataSource: items,
-                    isLoading: false,
-                });
-
-                if (result && result.update_date && !this.dataRepository.checkDate(result.update_date)) {
+                this.items = result && result.items ? result.items : result ? result : [];
+                // this.updateState({
+                //     dataSource: items,
+                //     isLoading: false,
+                // });
+                this.getFavoriteKeys();
+                if (!this.items || isRefresh && result && result.update_date && !dataRepository.checkDate(result.update_date)) {
                     DeviceEventEmitter.emit('showToast', '数据过时')
-                    return this.dataRepository.fetchNetRepository(url)
+                    return dataRepository.fetchNetRepository(url)
                 } else {
                     DeviceEventEmitter.emit('showToast', '显示缓存数据')
                 }
             })
             .then(items => {
                 if (!items || items.length === 0) return;
-                this.updateState({
-                    dataSource: items,
-                    isLoading: false,
-                });
+                // this.updateState({
+                //     dataSource: items,
+                //     isLoading: false,
+                // });
+                this.getFavoriteKeys();
                 DeviceEventEmitter.emit('showToast', '显示网络数据')
             })
             .catch((error) => {
                 console.log(error);
+                this.updateState({
+                    isLoading: false
+                })
             })
+    }
+    /**
+     * 更新ProjectItem的Favorite状态
+     */
+    flushFavoriteState() {
+        let projectModels = [];
+        let items = this.items;
+        for (var i = 0, len = items.length; i < len; i++) {
+            projectModels.push(new ProjectModel(items[i],  Utils.checkFavorite(items[i], this.state.favoriteKeys)));
+        }
+        this.updateState({
+            isLoading: false,
+            dataSource: projectModels,
+        });
+    }
+    /**
+     * 获取本地用户收藏的ProjectItem
+     */
+    getFavoriteKeys() {
+        favoriteDao.getFavoriteKeys().then((keys)=> {
+            if (keys) {
+                this.updateState({favoriteKeys: keys});
+            }
+            this.flushFavoriteState();
+        }).catch((error)=> {
+            this.flushFavoriteState();
+            console.log(error);
+        });
     }
     updateState(dic) {
         if(!this) return;
         this.setState(dic)
     }
+
     onSelect(item) {
-        this.props.navigation.navigate('RepositoryDetail', item);
+        this.props.navigation.navigate('RepositoryDetail', {projectModel:item, flag: FLAG_STORAGE.flag_trending});
     }
 
+    onFavorite(modelItem,isFavorite) {
+        if(isFavorite) {
+            favoriteDao.saveFavoriteItem(modelItem.fullName.toString(),JSON.stringify(modelItem))
+        }else {
+            favoriteDao.removeFavoriteItem(modelItem.fullName.toString())
+        }
+
+    }
     renderRow({item}) {
         return <TrendingCell
             data={item}
-            key={item.id}
+            key={item.modelItem.fullName}
             onSelect={() => this.onSelect(item)}
+            onFavorite={(callbackModelItem,callbackIsFavorite)=>this.onFavorite(callbackModelItem,callbackIsFavorite)}
         />
     }
 
